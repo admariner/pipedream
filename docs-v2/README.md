@@ -6,8 +6,7 @@
 
 ```bash
 asdf install
-yarn install
-yarn dev
+pnpm dev
 ```
 
 Open [http://localhost:3000/docs](http://localhost:3000/docs).
@@ -55,7 +54,7 @@ pages
       google.mdx  # /docs/workspaces/sso/google
 ```
 
-The `_meta.json` files in each directory defines a mapping between the labels in the sidebar and the files in that directory. If you want to add an item to the sidebar, you'll probably want to edit the `_meta.json` file. [See the Nextra docs](https://nextra.site/docs/docs-theme/page-configuration) for more info.
+The `_meta.tsx` files in each directory defines a mapping between the labels in the sidebar and the files in that directory. If you want to add an item to the sidebar, you'll probably want to edit the `_meta.tsx` file. [See the Nextra docs](https://nextra.site/docs/docs-theme/page-configuration) for more info.
 
 ## Custom components
 
@@ -64,3 +63,7 @@ Use (and create!) custom components in `components/`. You'll see a lot of refere
 ## Redirects
 
 If you need to add any custom redirects, e.g. when you move pages to a different directory, add then to the `vercel.json` file in this directory.
+
+## Adding new versions
+
+Add a new version of docs by creating a new feature branch in the format of `docs-v{number}-pathing`.

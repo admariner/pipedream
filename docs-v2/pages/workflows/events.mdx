@@ -4,26 +4,22 @@ import Callout from '@/components/Callout'
 
 Events trigger workflow executions. The event that triggers your workflow depends on the trigger you select for your workflow:
 
-- [HTTP triggers](/workflows/steps/triggers/#http) invoke your workflow on HTTP requests.
-- [Cron triggers](/workflows/steps/triggers/#schedule) invoke your workflow on a time schedule (e.g., on an interval).
-- [Email triggers](/workflows/steps/triggers/#email) invoke your workflow on inbound emails.
-- [Event sources](/workflows/steps/triggers/#app-based-triggers) invoke your workflow on events from apps like Twitter, Google Calendar, and more.
-
----
-
-
+- [HTTP triggers](/workflows/triggers#http) invoke your workflow on HTTP requests.
+- [Cron triggers](/workflows/triggers#schedule) invoke your workflow on a time schedule (e.g., on an interval).
+- [Email triggers](/workflows/triggers#email) invoke your workflow on inbound emails.
+- [Event sources](/workflows/triggers#app-based-triggers) invoke your workflow on events from apps like Twitter, Google Calendar, and more.
 
 ## Selecting a test event
 
 When you test any step in your workflow, Pipedream passes the test event you select in the trigger step:
 
-![Selecting a test event in the trigger](https://res.cloudinary.com/pipedreamin/image/upload/v1648758487/docs/components/CleanShot_2022-03-31_at_16.24.34_pb9jzt.png)
+![Selecting a test event in the trigger](pages/workflows/images/events/select-an-event.png)
 
 You can select any event you've previously sent to your trigger as your test event, or send a new one.
 
 ## Examining event data
 
-When you select an event, you'll see [the incoming event data](#event-format) and the [event context](#steps-trigger-context) for that event:
+When you select an event, you'll see [the incoming event data](#event-format) and the [event context](#stepstriggercontext) for that event:
 
 ![The event and context in a trigger initiation](https://res.cloudinary.com/pipedreamin/image/upload/v1648759141/docs/components/CleanShot_2022-03-31_at_16.30.37_jwwwdy.png)
 
@@ -90,7 +86,7 @@ You can use the data in `steps.trigger.context` to uniquely identify the Pipedre
 | `deployment_id`    |                                      A globally-unique string representing the current version of the workflow                                       |
 | `emitter_id`       |                            The ID of the workflow trigger that emitted this event, e.g. the [event source](/sources) ID.                             |
 | `id`               |                                  A unique, Pipedream-provided identifier for the event that triggered this workflow                                  |
-| `owner_id`         |                        The Pipedream-assigned [workspace ID](/workspaces/#finding-your-workspace-s-id) that owns the workflow                        |
+| `owner_id`         |                        The Pipedream-assigned [workspace ID](/workspaces/#finding-your-workspaces-id) that owns the workflow                        |
 | `platform_version` |                                         The version of the Pipedream execution environment this event ran on                                         |
 | `replay`           |                                                 A boolean, whether the event was replayed via the UI                                                 |
 | `trace_id`         | Holds the same value for all executions tied to an original event. [See below for more details](#how-do-i-retrieve-the-execution-id-for-a-workflow). |
@@ -108,13 +104,19 @@ Pipedream exposes two identifies for workflow executions: one for the execution,
 
 You may notice other properties in `context`. These are used internally by Pipedream, and are subject to change.
 
-## Limits on events queue
+## Event retention
 
-On the Free and Basic plans, only the last 100 events are retained for each workflow. After 100 events have been processed, Pipedream will delete the oldest event data as new events arrive, keeping only the last 100 events.
+On the Free and Basic plans, each workflow retains at most 100 events or 7 days of history.
 
-The Advanced and Business tiers have an upgraded amount of events in the queue, [please see the pricing page](https://pipedream.com/pricing) for more details.
+- After 100 events have been processed, Pipedream will delete the oldest event data as new events arrive, keeping only the last 100 events.
+- Or if an event is older than 7 days, Pipedream will delete the event data.
 
-<Callout type="info" emoji="ℹ️">
+Other paid plans have longer retention. [See the pricing page](https://pipedream.com/pricing) for details.
+
+Events are also stored in [event history](/event-history) for up to 30 days, depending on your plan. [See the pricing page](https://pipedream.com/pricing) for the retention on your plan.
+
+Events that are [delayed](/workflows/control-flow/delay) or [suspended](/glossary#suspend) are retained for the duration of the delay. After the delay, the workflow is executed, and the event data is retained according to the rules above.
+
+<Callout type="info">
 For an extended history of events across all of your workflows, included processed events, with the ability to filter by status and time range, please see the [Event History](/event-history/).
 </Callout>
-

@@ -4,7 +4,7 @@ import Callout from '@/components/Callout'
 
 Steps are the building blocks you use to create workflows.
 
-- Use [triggers](/workflows/steps/triggers/), [code](/code/), and [pre-built actions](/docs/components#actions)
+- Use [triggers](/workflows/triggers/), [code](/code/), and [pre-built actions](/components#actions)
 - Steps are run linearly, in the order they appear in your workflow
 - You can pass data between steps using [the `steps` object](#step-exports)
 - Observe the logs, errors, timing, and other execution details for every step
@@ -13,9 +13,9 @@ Steps are the building blocks you use to create workflows.
 
 ### Triggers
 
-Every workflow begins with a [trigger](/workflows/steps/triggers/) step. Trigger steps initiate the execution of a workflow; i.e., workflows execute on each trigger event. For example, you can create an [HTTP trigger](/workflows/steps/triggers/#http) to accept HTTP requests. We give you a unique URL where you can send HTTP requests, and your workflow is executed on each requesingle st.
+Every workflow begins with a [trigger](/workflows/triggers/) step. Trigger steps initiate the execution of a workflow; i.e., workflows execute on each trigger event. For example, you can create an [HTTP trigger](/workflows/triggers/#http) to accept HTTP requests. We give you a unique URL where you can send HTTP requests, and your workflow is executed on each request.
 
-You can add [multiple triggers](/workflows/steps/triggers/#can-i-add-multiple-triggers-to-a-workflow) to a workflow, allowing you to run it on distinct events.
+You can add [multiple triggers](/workflows/triggers/#can-i-add-multiple-triggers-to-a-workflow) to a workflow, allowing you to run it on distinct events.
 
 ### Code, Actions
 
@@ -29,7 +29,7 @@ Once you save a workflow, we deploy it to our servers. Each event triggers the w
 
 Steps have names, which appear at the top of the step:
 
-![The name of the step is on the top of the step](https://res.cloudinary.com/pipedreamin/image/upload/v1647958883/docs/components/CleanShot_2022-03-22_at_10.20.52_2x_ngo5r5.png)
+![The name of the step is on the top of the step](./images/steps/step-name.png)
 
 When you [share data between steps](#step-exports), you'll use this name to reference that shared data. For example, `steps.trigger.event` contains the event that triggered your workflow. If you exported a property called `myData` from this code step, you'd reference that in other steps using `steps.code.myData`. See the docs on [step exports](#step-exports) to learn more.
 
@@ -39,7 +39,7 @@ You can rename a step by clicking on its name and typing a new one in its place:
 
 After changing a step name, you'll need to update any references to the old step. In this example, you'd now reference this step as `steps.get_data`.
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 Step names cannot contain spaces or dashes. Please use underscores or camel casing for your step names, like `getData` or `get_data`.
 </Callout>
 
@@ -49,7 +49,7 @@ You can generate form based inputs for steps using `props`. This allows the step
 
 Learn more about using `props` in our [Node.js code step documentation.](/code/nodejs/#passing-props-to-code-steps)
 
-<Callout type="warning" emoji="⚠">
+<Callout type="warning">
 Passing props from the workflow builder to workflow steps are only available in Node.js code steps.
 
 We do not currently offer this feature for Python, Bash or Go powered code steps.
@@ -70,7 +70,7 @@ For examples of supported data types in your steps language, see the examples be
 
 Pipedream lets you add notes to individual steps in your workflow so you can  include helpful context to other workspace members or even yourself, and you can even write markdown!
 
-![Viewing step notes](/images/steps/step-notes-example.png)
+![Viewing step notes](./images/steps/step-notes.png)
 
 ### Adding or editing a note
 1. Enter build mode on any workflow
@@ -83,12 +83,10 @@ Pipedream lets you add notes to individual steps in your workflow so you can  in
 ![Adding step notes](/images/steps/adding-step-note.gif)
 
 ### Showing notes
-1. Any step that has a note will indicate this with a special icon (shown below)
-2. Click on the icon to hide or show the note
+Any step that has a note will have a **Note** section in the top panel in the editor pane.
 
-![View notes](/images/steps/show-hide-note.gif)
+![Viewing step notes](./images/steps/step-notes.png)
 
 ### Current limitations
 
-- Step notes are only accessible in Build mode, not in the Inspector
-
+- Step notes are only accessible in Build mode, not in the Inspector.

@@ -2,7 +2,7 @@ import Callout from '@/components/Callout'
 
 # Migrate from v1
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 Never used Pipedream v1? You can skip this migration guide and read on about [Steps](/workflows/steps/).
 </Callout>
 
@@ -155,7 +155,7 @@ defineComponent({
 });
 ```
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 Using `return` to export data is the same from v1 to v2. You can still `return` data, and it will be available to other steps with `steps.[stepName].$return_value.
 </Callout>
 
@@ -248,7 +248,7 @@ After testing the step, you'll see the Slack app will appear in the **Configurat
 
 You can still return an HTTP response from an HTTP-triggered workflow.
 
-Use [`$.respond`](/workflows/steps/triggers/#http) to send a JSON or string response from the HTTP call that triggered the workflow.
+Use [`$.respond`](/workflows/triggers/#http) to send a JSON or string response from the HTTP call that triggered the workflow.
 
 ```javascript
 export default defineComponent({
@@ -338,7 +338,7 @@ Yes, absolutely you will still be able to view and edit v1 workflows. There is n
 
 At this time we do not have an automated process to change v1 to v2. To create a v2 equivalent workflow, you can recompose your v1 workflow in the v2 builder.
 
-However, if it uses custom Node.js code steps, be sure to [follow the changes we describe in the guide above](/migrate-from-v1/#node-js-code-step-changes).
+However, if it uses custom Node.js code steps, be sure to [follow the changes we describe in the guide above](/migrate-from-v1/#nodejs-code-step-changes).
 
 ### When will the new (v2) workflow builder be the default builder for all customers?
 

@@ -9,7 +9,7 @@ Components are [Node.js modules](api/#component-structure) that run on Pipedream
 
 Components are most commonly used as the building blocks of Pipedream workflows, but they can also be used like typical serverless functions. You can explore curated components for popular apps in Pipedream's [Marketplace](https://pipedream.com/explore) and [GitHub repo](https://github.com/pipedreamhq/pipedream/tree/master/components) or you can author and share your own.
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 Our TypeScript component API is in **beta**. If you're interested in developing TypeScript components and providing feedback, [see our TypeScript docs](/components/typescript/).
 </Callout>
 
@@ -60,11 +60,15 @@ Private action components published from the [CLI](/cli/reference/#pd-publish) o
 
 To use a published action, add a new step to your workflow and click **My Actions**. Your privately published action components will appear in this list.
 
-![Use the "My Actions" section in a new step to include your private actions](https://res.cloudinary.com/pipedreamin/image/upload/v1618550730/docs/components/image-20210411165325045_ia5sd5.png)
+![Use the "My Actions" section in a new step to include your private actions](pages/components/images/v3/using-private-actions.png)
 
 ### Using Private Sources
 
 Private source components deployed from your account via the [CLI](/cli/reference/#pd-deploy) will automatically create a new Source in your account with the prop configuration you specified.
+
+Then in the workflow builder, when creating the trigger, select the *Existing* sources tab in the upper right corner to select your deployed source:
+
+![Selecting a pre-exisiting deployed source as the trigger for the workflow](pages/components/images/v3/using-private-sources.png)
 
 You can also deploy new instances of a source from the [Components dashboard](https://res.cloudinary.com/pipedreamin/image/upload/v1618550730/docs/components/image-20210411165325045_ia5sd5.png). To deploy a new instance of a source, click the menu on the right hand side and select **Create source**.
 
@@ -90,8 +94,8 @@ Finally, the target app must be integrated with Pipedream. You can explore all a
 
 ### Quickstart Guides
 
-- [Sources](quickstart/nodejs/sources/)
-- [Actions](quickstart/nodejs/actions/)
+- [Sources](/components/sources-quickstart/)
+- [Actions](/components/actions-quickstart/)
 
 ### Component API Reference
 
@@ -113,7 +117,7 @@ A prompt will open to confirm the action, click **Confirm** to unpublish your ac
 
 ![Unpublish a component from your account by opening the menu on the right hand side](https://res.cloudinary.com/pipedreamin/image/upload/v1666103082/docs/components/CleanShot_2022-10-18_at_10.22.45_vdhoq7.gif)
 
-<Callout type="error" emoji="🚫">
+<Callout type="error">
 Unpublishing a component is a permanent action, please be careful to ensure you still have access to the source code.
 </Callout>
 

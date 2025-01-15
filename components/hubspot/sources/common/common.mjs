@@ -28,6 +28,51 @@ export default {
     _setAfter(after) {
       this.db.set("after", after);
     },
+    async getWriteOnlyProperties(resourceName) {
+      const { results: properties } = await this.hubspot.getProperties({
+        objectType: resourceName,
+      });
+      return properties.filter(({ modificationMetadata }) => !modificationMetadata.readOnlyValue);
+    },
+    getChunks(items) {
+      const MAX_CHUNK_SIZE = 45;
+      return Array.from({
+        length: Math.ceil(items.length / MAX_CHUNK_SIZE),
+      })
+        .map((_, index) => index * MAX_CHUNK_SIZE)
+        .map((begin) => items.slice(begin, begin + MAX_CHUNK_SIZE));
+    },
+    processChunk({
+      batchRequestFn,
+      mapper = ({ id }) => ({
+        id,
+      }),
+    }) {
+      return async (chunk) => {
+        const { results } = await batchRequestFn(chunk.map(mapper));
+        return results;
+      };
+    },
+    async processChunks({
+      chunks, ...args
+    }) {
+      const promises = chunks.map(this.processChunk(args));
+      const results = await Promise.all(promises);
+      return results.flat();
+    },
+    async processEvents(resources, after) {
+      let maxTs = after;
+      for (const result of resources) {
+        if (await this.isRelevant(result, after)) {
+          this.emitEvent(result);
+          const ts = this.getTs(result);
+          if (ts > maxTs) {
+            maxTs = ts;
+          }
+        }
+      }
+      this._setAfter(maxTs);
+    },
     async paginate(params, resourceFn, resultType = null, after = null) {
       let results = null;
       let maxTs = after || 0;
@@ -83,7 +128,7 @@ export default {
           items = results;
         }
         for (const item of items) {
-          if (this.isRelevant(item, after)) {
+          if (await this.isRelevant(item, after)) {
             this.emitEvent(item);
             const ts = this.getTs(item);
             if (ts > maxTs) {
@@ -136,7 +181,7 @@ export default {
   },
   async run() {
     const after = this._getAfter();
-    const params = this.getParams(after);
+    const params = await this.getParams(after);
     await this.processResults(after, params);
   },
 };

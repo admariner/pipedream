@@ -7,7 +7,7 @@ Pipedream supports writing Node.js v{process.env.PIPEDREAM_NODE_VERSION} at any 
 
 Anything you can do with Node.js, you can do in a workflow. This includes using most of [npm's 400,000+ packages](#using-npm-packages). JavaScript is one of the [most used](https://insights.stackoverflow.com/survey/2019#technology-_-programming-scripting-and-markup-languages) [languages](https://github.blog/2018-11-15-state-of-the-octoverse-top-programming-languages/) in the world, with a thriving community and extensive package ecosystem. If you work on websites and know JavaScript well, Pipedream makes you a full stack engineer. If you've never used JavaScript, see the [resources below](#new-to-javascript).
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 It's important to understand the core difference between Node.js and the JavaScript that runs in your web browser: **Node doesn't have access to some of the things a browser expects, like the HTML on the page, or its URL**. If you haven't used Node before, be aware of this limitation as you search for JavaScript examples on the web.
 </Callout>
 
@@ -109,7 +109,7 @@ export default defineComponent({
 
 Now this `pokemon` data is accessible to downstream steps within `steps.code.pokemon`
 
-<Callout type="warning" emoji="⚠">
+<Callout type="warning">
 You can only export JSON-serializable data from steps. Things like:
 
 - strings
@@ -146,7 +146,7 @@ export default defineComponent({
 
 The workflow builder now can accept text input to populate the `firstName` to this particular step only:
 
-![Workflow builder displaying the input visually as a text input field](/images/code/nodejs/user-input-props-example.png)
+![Workflow builder displaying the input visually as a text input field](pages/code/nodejs/images/v3/code/nodejs/first-name-prop-example.png)
 
 Accepting a single string is just one example, you can build a step to accept arrays of strings through a dropdown presented in the workflow builder.
 
@@ -170,7 +170,7 @@ This defines [a Node.js component](/components/api/). Components let you:
 
 - Pass input to steps using [props](/code/nodejs/#passing-props-to-code-steps)
 - [Connect an account to a step](/connected-accounts/#from-a-code-step)
-- [Issue HTTP responses](/workflows/steps/triggers/#http-responses)
+- [Issue HTTP responses](/workflows/triggers/#http-responses)
 - Perform workflow-level flow control, like [ending a workflow early](#ending-a-workflow-early)
 
 When the step runs, Pipedream executes the `run` method:
@@ -190,7 +190,7 @@ export default defineComponent({
 });
 ```
 
-When you [connect an account to a step](/connected-accounts/#from-a-code-step), Pipedream exposes the auth info in the variable [`this.appName.$auth`](/code/nodejs/auth/#accessing-connected-account-data-with-this-appname-auth).
+When you [connect an account to a step](/connected-accounts/#from-a-code-step), Pipedream exposes the auth info in the variable [`this.appName.$auth`](/code/nodejs/auth/#accessing-connected-account-data-with-thisappnameauth).
 
 ## Logs
 
@@ -216,7 +216,7 @@ export default defineComponent({
 
 Pipedream will attempt to catch syntax errors when you're writing code, highlighting the lines where the error occurred in red.
 
-<Callout type="warning" emoji="⚠">
+<Callout type="warning">
 While you can save a workflow with syntax errors, it's unlikely to run correctly on new events. Make sure to fix syntax errors before running your workflow.
 </Callout>
 
@@ -278,7 +278,7 @@ To allow for patch and minor version upgrades, use:
 import got from "got@^11.0.0";
 ```
 
-<Callout type="warning" emoji="⚠">
+<Callout type="warning">
 The behavior of the caret (`^`) operator is different for 0.x versions, for which it will only match patch versions, and not minor versions.
 </Callout>
 
@@ -344,17 +344,38 @@ Within a step, the [normal rules of JavaScript variable scope](https://developer
 There are two ways to make HTTP requests in code steps:
 
 - Use any HTTP client that works with Node.js. [See this example guide for how to use `axios` to make HTTP requests](/code/nodejs/http-requests/).
-- [Use `$.send.http()`](/destinations/http/#using-send-http-in-workflows), a Pipedream-provided method for making asynchronous HTTP requests.
+- [Use `$.send.http()`](/destinations/http/#using-sendhttp-in-workflows), a Pipedream-provided method for making asynchronous HTTP requests.
 
-In general, if you just need to make an HTTP request but don't care about the response, [use `$.send.http()`](/destinations/http/#using-send-http-in-workflows). If you need to operate on the data in the HTTP response in the rest of your workflow, [use `axios`](/code/nodejs/http-requests/).
+In general, if you just need to make an HTTP request but don't care about the response, [use `$.send.http()`](/destinations/http/#using-sendhttp-in-workflows). If you need to operate on the data in the HTTP response in the rest of your workflow, [use `axios`](/code/nodejs/http-requests/).
 
 ## Returning HTTP responses
 
-You can return HTTP responses from [HTTP-triggered workflows](/workflows/steps/triggers/#http) using the [`$.respond()` function](/workflows/steps/triggers/#http-responses).
+You can return HTTP responses from [HTTP-triggered workflows](/workflows/triggers/#http) using the [`$.respond()` function](/workflows/triggers/#http-responses).
+
+## Invoke another workflow
+
+<Callout type="warning">
+This is an alpha feature and is subject to change without prior notice.
+</Callout>
+
+You can invoke another workflow in your workspace with `$.flow.trigger`:
+
+```
+await $.flow.trigger(
+  workflowId, // your Pipedream workflow ID, e.g. p_abc123
+  payload, // any JSON-serializable data
+)
+```
+
+[Find your workflow's ID here.](/troubleshooting#where-do-i-find-my-workflows-id)
+
+This invokes the workflow directly -- you don't need to configure a trigger, and the request does not leave the platform.
+
+We also provide a [Trigger Workflow](https://pipedream.com/apps/helper-functions/actions/trigger-workflow) action in the [Helper Functions](https://pipedream.com/apps/helper-functions) app so you don't need to do it by code!
 
 ## Ending a workflow early
 
-<VideoPlayer title="Conditionally run Workflows" url="https://www.youtube.com/embed/sajgIH3dG58" startAt="205" />
+<VideoPlayer title="Conditionally run Workflows" src="https://www.youtube.com/embed/sajgIH3dG58" startAt="205" />
 
 Sometimes you want to end your workflow early, or otherwise stop or cancel the execution or a workflow under certain conditions. For example:
 
@@ -365,7 +386,7 @@ Sometimes you want to end your workflow early, or otherwise stop or cancel the e
 
 **In any code step, calling `return $.flow.exit()` will end the execution of the workflow immediately.** No remaining code in that step, and no code or destination steps below, will run for the current event.
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 It's a good practice to use `return $.flow.exit()` to immediately exit the workflow.
 In contrast, `$.flow.exit()` on its own will end the workflow only after executing all remaining code in the step.
 </Callout>
@@ -415,7 +436,7 @@ Throwing a `ConfigurationError` in a Node.js step will display the error message
 
 This is useful for providing feedback during validation of `props`. In the example below, a required Header value is missing from the Google Sheets action:
 
-![Example of an ConfigurationError](https://res.cloudinary.com/pipedreamin/image/upload/v1651680315/docs/components/CleanShot_2022-05-04_at_12.04.38_2x_vf8jny.png)
+![Example of an ConfigurationError](pages/code/nodejs/images/v3/code/nodejs/configuration-error-example.png)
 
 Or you can use it for validating the format of a given `email` prop:
 

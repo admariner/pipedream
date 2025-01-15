@@ -5,15 +5,19 @@ import Callout from "@/components/Callout";
 You can control workflow-specific settings in your workflow's **Settings**:
 
 1. Visit your workflow
-2. Select the _..._ menu at the top-right and click **Settings**:
+2. Click on Workflow Settings on the top left:
 
 <br />
 <img
-  src="https://res.cloudinary.com/pipedreamin/image/upload/v1656632132/docs/2022-06-30_16.35.17_g13fag.gif"
-  alt="Click on the ... menu at the top-right and select Settings"
+  src="https://res.cloudinary.com/pipedreamin/image/upload/v1710510858/docs/docs/workflows/settings/CleanShot_2024-03-15_at_09.53.34_sqkcse.gif"
+  alt="Click on Workflow Settings on the top left"
   width="300px"
 />
 <br />
+
+<Callout type="info">
+You can also open the workflow settings using `CMD` + `,` on Mac, or `Ctrl` + `,` on Windows.
+</Callout>
 
 ## Enable Workflow
 
@@ -41,6 +45,12 @@ You can disable these notifications for your workflow by disabling the **Notify 
 
 ## Auto-retry Errors
 
+<Callout type="info">
+**Out of Memory and Timeout Errors**
+
+Pipedream will not automatically retry if an execution fails due to an Out of Memory (OOM) error or a timeout. If you encounter these errors frequently, consider increasing the configuration settings for your workflow.
+</Callout>
+
 Customers on the [Advanced Plan](https://pipedream.com/pricing) can automatically retry workflows on errors. If any step in your workflow throws an error, Pipedream will retry the workflow from that failed step, re-rerunning the step up to 8 times over a 10 hour span with an [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) strategy.
 
 On error, the step will export a `$summary` property that tells you how many times the step has been retried, and an `$attempt` object with the following properties:
@@ -67,13 +77,13 @@ By default, if a step fails on all 8 retries, and throws a final error, you'll r
 
 On any workflow with auto-retry enabled, you can optionally choose to **Send notification on first error**. This is disabled by default so you don't get emails for transient errors, but you can enable for critical workflows where you want visibility into all errors.
 
-For custom control over error handling, you can implement error logic in code steps (e.g. `try` / `catch` statements in Node.js code), or [create your own custom error workflow](/workflows/errors/#process-errors-with-custom-logic-instead-of-email).
+For custom control over error handling, you can implement error logic in code steps (e.g. `try` / `catch` statements in Node.js code), or [create your own custom error workflow](/workflows/errors/#handle-errors-with-custom-logic).
 
 ## Data Retention Controls
 
 By default, Pipedream stores exports, logs, and other data tied to workflow executions. You can view these logs in two places:
 
-1. [The workflow inspector](/workflows/events/inspect/#the-inspector)
+1. [The workflow inspector](/workflows/inspect/#the-inspector)
 2. [Event History](/event-history)
 
 But if you're processing sensitive data, you may not want to store those logs. You can **Disable data retention** in your workflow settings to disable **all** logging. Since Pipedream stores no workflow logs with this setting enabled, you'll see no logs in the inspector or event history UI.
@@ -87,10 +97,10 @@ Refer to our [pricing page](https://pipedream.com/pricing) to understand the lat
 - **Data Retention Controls do not apply to sources**: Even with data retention disabled on your workflow, Pipedream will still log inbound events for the source.
 - **No events will be shown in the UI**: When data retention is disabled for your workflow, the Pipedream UI will not show any new events in the inspector or Event History for that workflow.
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 **Avoid surfacing events in the builder**
 
-Even with data retention disabled on your workflow, the builder will still surface inbound events when in build mode. To avoid surfacing potentially sensitive data here as well, refer to [these docs](/workflows/steps/triggers/#pipedream-specific-request-parameters).
+Even with data retention disabled on your workflow, the builder will still surface inbound events when in build mode. To avoid surfacing potentially sensitive data here as well, refer to [these docs](/workflows/triggers/#pipedream-specific-request-parameters).
 
 </Callout>
 
@@ -106,6 +116,14 @@ If your workflow times out, and needs to run for longer than the [default limit]
 
 By default, workflows run with {process.env.MEMORY_LIMIT} of memory. If you're processing a lot of data in memory, you might need to raise that limit. Here, you can increase the memory of your workflow up to {process.env.MEMORY_ABSOLUTE_LIMIT}.
 
+Increasing your workflow's memory gives you a proportional increase in CPU, so increasing your workflow's memory can reduce its overall runtime and make it more performant.
+
+<Callout type="info">
+**How can my workflow run faster?**
+
+See [our guide on running workflows faster](/troubleshooting#how-can-my-workflow-run-faster).
+</Callout>
+
 **Pipedream charges credits proportional to your memory configuration**. When you modify your memory settings, Pipedream will show you the number of credits you'll be charged per execution. [Read more here](/pricing/#how-does-workflow-memory-affect-credits).
 
 ### Concurrency and Throttling
@@ -114,7 +132,7 @@ By default, workflows run with {process.env.MEMORY_LIMIT} of memory. If you're p
 
 ## Eliminate cold starts
 
-A **cold start** refers to the delay between the invocation of workflow and the execution of the workflow code. Cold starts happen when Pipedream spins up a new [execution environment](/privacy-and-security/#execution-environment) to handle incoming requests.
+A **cold start** refers to the delay between the invocation of workflow and the execution of the workflow code. Cold starts happen when Pipedream spins up a new [execution environment](/privacy-and-security/#execution-environment) to handle incoming events.
 
 Specifically, cold starts occur on the first request to your workflow after a period of inactivity (roughly 5 minutes), or if your initial worker is already busy and a new worker needs to be initialized. In these cases, Pipedream creates a new execution environment to process your event. **Initializing this environment takes a few seconds, which delays the execution of this first event**.
 
@@ -133,7 +151,7 @@ You can reduce cold starts by configuring a number of dedicated **workers**:
 
 When you configure workers for a specific workflow, Pipedream initializes dedicated workers — virtual machines that run Pipedream's [execution environment](/privacy-and-security/#execution-environment). [It can take a few minutes](#how-long-does-it-take-to-spin-up-a-dedicated-worker) for new dedicated workers to deploy. Once deployed, these workers are available at all times to respond to workflow executions, with no cold starts.
 
-<Callout type="warning" emoji="⚠">
+<Callout type="warning">
 You may need to configure [multiple dedicated workers](#how-many-workers-should-i-configure) to handle multiple, concurrent requests.
 
 Pipedream also performs some initialization operations on new workflow runs, so you may still observe a small startup time (typically around 50ms per workflow step) on dedicated workers.
@@ -152,7 +170,7 @@ Incoming requests are handled by a single worker, one at a time. If you only rec
 
 But you might have a higher-volume app that receives two concurrent requests. In that case, Pipedream spins up **two** workers to handle each request.
 
-For many user-facing (even internal) applications, the number of requests over time can be modeled with a [Poisson distrubution](https://en.wikipedia.org/wiki/Poisson_distribution). You can use that distribution to estimate the number of workers you need at an average time, or set it higher if you want to ensure a specific percentage of requests hit a dedicated worker. You can also save a record of all workflow runs to your own database, with the timestamp they ran ([see `steps.trigger.context.ts`](/workflows/events/#steps-trigger-context)), and look at your own pattern of requests, to compute the optimal number of workers.
+For many user-facing (even internal) applications, the number of requests over time can be modeled with a [Poisson distrubution](https://en.wikipedia.org/wiki/Poisson_distribution). You can use that distribution to estimate the number of workers you need at an average time, or set it higher if you want to ensure a specific percentage of requests hit a dedicated worker. You can also save a record of all workflow runs to your own database, with the timestamp they ran ([see `steps.trigger.context.ts`](/workflows/events/#stepstriggercontext)), and look at your own pattern of requests, to compute the optimal number of workers.
 
 ### Do compute budgets apply to dedicated workers?
 
@@ -192,25 +210,6 @@ Additionally, any change to dedicated worker configuration, (including worklow d
   alt="Dedicated worker overlap"
 />
 <br />
-
-## Attachments
-
-Sometimes, you'll need to reference static files in your workflow, like a CSV. Files uploaded in the **Attachments** section can be referenced in your workflow under the `steps.trigger.context.attachments` object.
-
-For example, if you upload a file named `test.csv`, Pipedream will expose the _file path_ of the uploaded file at `steps.trigger.context.attachments["test.csv"]`. You can read the contents of the file using `fs.readFileSync`:
-
-```javascript
-import fs from "fs";
-
-export default defineComponent({
-  async run({ steps, $ }) {
-    const fileData = fs
-      .readFileSync(steps.trigger.context.attachments["test.csv"])
-      .toString();
-    console.log(fileData);
-  },
-});
-```
 
 ### Limits
 

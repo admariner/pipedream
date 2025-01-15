@@ -7,7 +7,7 @@ import VideoPlayer from '@/components/VideoPlayer'
 
 Pipedream provides two ways to share code across workflows:
 
-- **Publish an action from a Node.js code step**. [Publish any Node.js code step as a reusable action](/code/nodejs/sharing-code/#publish-an-action-from-a-node-js-code-step) from the Pipedream dashboard.
+- **Publish an action from a Node.js code step**. [Publish any Node.js code step as a reusable action](/code/nodejs/sharing-code/#publish-an-action-from-a-nodejs-code-step) from the Pipedream dashboard.
 
 - **Create an action from code**. Develop your action code on your local filesystem and [publish to your Pipedream account using the Pipedream CLI](/components/quickstart/nodejs/actions/).
 
@@ -61,7 +61,7 @@ Then open the menu in the top righthand corner of the code step and select **Pub
 
 And now you've successfully saved a custom Node.js code step to your account. You'll be able to use this code step in any of your workflows.
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 **Why can't I use the `steps` variable in published Node.js code steps?**
 
 The `steps` variable contains the _workflows_ step exports.
@@ -121,7 +121,7 @@ export default defineComponent({
 
 Finally use the **Publish to My Actions** button in the right hand side menu to publish this new version.
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 **I'm not seeing an **Edit Action** button option in my step**
 
 The **Edit Action** button is only available for actions that are published from Node.js code steps.
@@ -129,7 +129,7 @@ The **Edit Action** button is only available for actions that are published from
 Actions submitted to the public component registry can contain multiple files. At this time it's not possible to edit multi-file components direct in a code step.
 </Callout>
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 **Will publishing a new version of an action automatically update all other steps using it?**
 
 No, a new version of an action doesn't automatically update all instances of the same action across your workflows.
@@ -137,7 +137,7 @@ No, a new version of an action doesn't automatically update all instances of the
 This gives you the control to gradually update. Learn how to [update steps to the newest action versions here](https://pipedream.com/docs/workflows/steps/actions/#updating-actions-to-the-latest-version).
 </Callout>
 
-After publishing a new version, all other steps using this same action will have the option to [update to the latest version](/workflows/steps/actions/#updating-actions-to-the-latest-version).
+After publishing a new version, all other steps using this same action will have the option to [update to the latest version](/workflows/actions/#updating-actions-to-the-latest-version).
 
 ## Differences between publishing actions from workflow Node.js code steps and directly from code
 
